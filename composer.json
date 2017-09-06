@@ -1,0 +1,20 @@
+{
+    "name": "umurkaragoz/laravel-std-admin",
+    "description": "Admin panel backbone boilerplate for standard laravel projects.",
+    "type": "library",
+    "require": {
+        "php": ">=7.0"
+    },
+    "authors": [
+        {
+            "name": "Umur Karagöz",
+            "email": "lazysheepherd@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Umurkaragoz\\StdAdmin\\": "src/"
+        }
+    }
+}
