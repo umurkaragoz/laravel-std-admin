@@ -11,6 +11,13 @@
             "email": "lazysheepherd@gmail.com"
         }
     ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Umurkaragoz\\StdAdmin\\StdAdminServiceProvider"
+            ]
+        }
+    },
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
