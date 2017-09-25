@@ -95,7 +95,7 @@ trait ManagesDeletables
         /** @var Model $items */
         $items = $item::select('id', 'name', 'deleted_at')->onlyTrashed()->filter($request->get('q'))->get()->toArray();
         
-        return view('umurkaragoz.std-admin.trashed')
+        return app('view')->make('std-admin::trashed')
             ->with('rows', $items);
     }
 }

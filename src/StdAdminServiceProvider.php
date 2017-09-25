@@ -16,6 +16,8 @@ class StdAdminServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/views' => base_path('resources/views/vendor/umurkaragoz/std-admin'),
         ]);
+        
+        $this->loadViewsFrom(__DIR__ . '/views','std-admin');
     }
     
     /**

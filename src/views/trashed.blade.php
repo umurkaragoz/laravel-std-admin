@@ -1,7 +1,7 @@
 @extends('admin._layouts.master')
 
 @section('content')
-    <div class="row">
+    <div class="row std-admin">
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
@@ -10,7 +10,7 @@
                         <div class="pull-left">
                             <a href="{{ $routeUrl->index }}" class="back-btn btn btn-primary"><i class="fa fa-arrow-left"></i>&nbsp; Geri Dön</a>
                         </div>
-                        @include('umurkaragoz.std-admin._partials.page-search')
+                        @include('std-admin::_partials.page-search')
                     </div>
                 </div>
                 <!-- /.box-header -->
