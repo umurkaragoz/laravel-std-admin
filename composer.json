@@ -11,11 +11,6 @@
             "email": "lazysheepherd@gmail.com"
         }
     ],
-    "autoload": {
-        "files": [
-            "src/helpers.php"
-        ]
-    },
     "extra": {
         "laravel": {
             "providers": [
@@ -30,6 +25,9 @@
     "autoload": {
         "psr-4": {
             "Umurkaragoz\\StdAdmin\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }
