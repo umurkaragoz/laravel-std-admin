@@ -4,7 +4,7 @@
 /**
  * Get the Module instance
  *
- * @return \Umurkaragoz\StdAdmin\StdAdminModule
+ * @return \Umurkaragoz\StdAdmin\ModuleFacade
  */
 function module()
 {
