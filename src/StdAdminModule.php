@@ -4,7 +4,7 @@ namespace Umurkaragoz\StdAdmin;
 
 use ReflectionClass;
 
-class Module
+class StdAdminModule
 {
 
     private $config = [];

@@ -30,7 +30,12 @@ class StdAdminServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(StdAdminModule::class, function () {
+            $module = new StdAdminModule();
+
+            return $module;
+        }
+        );
     }
 
     private function setupModuleMorphMap()
@@ -42,3 +47,4 @@ class StdAdminServiceProvider extends ServiceProvider
         Relation::morphMap(module()->get('class', 'slug'));
     }
 }
+ 

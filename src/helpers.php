@@ -4,9 +4,9 @@
 /**
  * Get the Module instance
  *
- * @return \Umurkaragoz\StdAdmin\Module
+ * @return \Umurkaragoz\StdAdmin\StdAdminModule
  */
 function module()
 {
-    return app(\Umurkaragoz\StdAdmin\Module::class);
+    return app(\Umurkaragoz\StdAdmin\StdAdminModule::class);
 }

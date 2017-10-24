@@ -9,6 +9,6 @@ class ModuleFacade extends \Illuminate\Support\Facades\Facade
      */
     protected static function getFacadeAccessor()
     {
-        return Module::class;
+        return StdAdminModule::class;
     }
 }
