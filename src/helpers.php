@@ -1,13 +1,12 @@
 <?php
 
-/* ----------------------------------------------------------------------------------------------------------------------------------- loggedIn -+- */
+/* ------------------------------------------------------------------------------------------------------------------------------------- module -+- */
 /**
+ * Get the Module instance
  *
- * @return joke
- *
- * @version 1.0.0
+ * @return \Umurkaragoz\StdAdmin\StdAdminModule
  */
-function testHelper()
+function module()
 {
-    dd('heelloouuuu');
+    return app(\Umurkaragoz\StdAdmin\StdAdminModule::class);
 }
