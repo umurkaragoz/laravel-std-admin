@@ -11,11 +11,19 @@
             "email": "lazysheepherd@gmail.com"
         }
     ],
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ]
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "Umurkaragoz\\StdAdmin\\StdAdminServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Module": "Umurkaragoz\\StdAdmin\\StdAdminModule"
+            }
         }
     },
     "minimum-stability": "stable",
