@@ -2,12 +2,13 @@
 
 /* ----------------------------------------------------------------------------------------------------------------------------------- loggedIn -+- */
 /**
+ * Access to StdAdminModule class
  *
- * @return joke
+ * @return \Umurkaragoz\StdAdmin\StdAdminModule
  *
  * @version 1.0.0
  */
-function testHelper()
+function module()
 {
-    dd('heelloouuuu');
+    return \Umurkaragoz\StdAdmin\StdAdminModule::class;
 }
