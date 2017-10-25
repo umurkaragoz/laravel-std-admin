@@ -14,6 +14,11 @@ class StdAdminModule
         $this->config = config('std-admin.modules');
 
         foreach ($this->config as $key => &$options) {
+            if (!$options['enabled']) {
+                unset($this->config[$key]);
+                continue;
+            }
+
             $reflection = new ReflectionClass($options['class']);
 
             $options['class-short'] = $reflection->getShortName();
@@ -29,7 +34,7 @@ class StdAdminModule
      * @param null|string $key
      * @param bool|array  $filter
      *
-     * @return array
+     * @return array|mixed returns the requested value without outer array IF $key is not specified and $filter is given as string.
      */
     public function get($value, $key = null, $filter = false)
     {
@@ -44,7 +49,16 @@ class StdAdminModule
         // filter the modules if filter provided
         if ($filter) $config = $config->only($filter);
 
-        return $config->pluck($value, $key)->toArray();
+        $config = $config->pluck($value, $key);
+
+        // returns single value without outer array IF $key is not specified and $filter is given as string.
+        if ($key == null && is_string($filter)) {
+            $config = $config->first();
+        } else {
+            $config = $config->toArray();
+        }
+
+        return $config;
     }
 
 }

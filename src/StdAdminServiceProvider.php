@@ -20,7 +20,10 @@ class StdAdminServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/views', 'std-admin');
 
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
         $this->setupModuleMorphMap();
+
     }
 
     /**
