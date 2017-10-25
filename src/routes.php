@@ -1,8 +1,8 @@
 <?php
 // @formatter:off
 
-
 Route::pattern('id', '[0-9]+');
+Route::pattern('model','[a-z0-9\-]+');
 
 /* ------------------------------------------------------------------------------------------------------------------------------ Admin / Login -+- */
 
@@ -23,13 +23,12 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 
 
     /* ------------------------------------------------------------------------------------------------------------------------ Admin / Modules -+- */
     // here we create routes for our modules based on their config
-    foreach(module()->get('*') as $module => $config){
-
+    foreach(module()->all('*') as $module => $config){
 
         /* ------------------------------------------------------------------------------------------------------------------ craft method list <-- */
         $only = [];
 
-        $functions = module()->get('functions', null, $module);
+        $functions = module()->all('functions', null, $module);
 
         if(array_get($functions, 'index'))
             $only[] = 'index';
@@ -46,7 +45,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 
         /* -------------------------------------------------------------------------------------------------------------------- generate routes <-- */
         Route::resource($module, "{$config['class-short']}Controller", ['only' => $only]);
 
-        if(module()->get('functions.restore',null,$module)){
+        if(module()->all('functions.restore',null,$module)){
             Route::get("$module/trashed",    ["as" => "$module.trashed",    "uses" => "{$config['class-short']}Controller@trashed"]);
             Route::get("$module/{id}",       ["as" => "$module.restore",    "uses" => "{$config['class-short']}Controller@restore"]);
         }

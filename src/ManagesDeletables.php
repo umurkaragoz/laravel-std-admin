@@ -13,13 +13,13 @@ use Illuminate\Http\Request;
  */
 trait ManagesDeletables
 {
-    
+
     /* ----------------------------------------------------------------------------------------------------------------------------------- boot -+- */
     final protected function bootManagesDeletablesTrait()
     {
         $this->setManagesDeletablesDefaultOptions();
     }
-    
+
     /* -------------------------------------------------------------------------------------------------------------------- set default options -+- */
     private function setManagesDeletablesDefaultOptions()
     {
@@ -47,55 +47,60 @@ trait ManagesDeletables
             ]
         ]);
     }
-    
+
     /* -------------------------------------------------------------------------------------------------------------------------------- destroy -+- */
     public function destroy($id)
     {
-        $item = $this->opts_get('deletable.model');
-        /** @var Model $item */
-        $item = $item::findOrFail($id);
-        $this->item = $item;
-        
-        if ($item->delete()) {
+        /** @var Model $row */
+        $row = module('class')::findOrFail($id);
+        $this->item = $row;
+
+        if ($row->delete()) {
             $success = true;
             $message = $this->opts_get('deletable.messages.destroy.success');
         } else {
             $success = false;
             $message = $this->opts_get('deletable.messages.destroy.error');
         }
-        
+
         return $this->jsonResponse($success, $message);
     }
-    
+
     /* -------------------------------------------------------------------------------------------------------------------------------- restore -+- */
     public function restore($id)
     {
-        $item = $this->opts_get('deletable.model');
-        
-        /** @var Model $item */
-        $item = $item::onlyTrashed()->findOrFail($id);
-        $this->item = $item;
-        
-        if ($item->restore()) {
+        /** @var Model $row */
+        $row = module('class')::onlyTrashed()->findOrFail($id);
+
+        $this->item = $row;
+
+        if ($row->restore()) {
             $success = true;
             $message = $this->opts_get('deletable.messages.restore.success');
         } else {
             $success = false;
             $message = $this->opts_get('deletable.messages.restore.error');
         }
-        
+
         return $this->jsonResponse($success, $message);
     }
-    
+
     /* -------------------------------------------------------------------------------------------------------------------------------- trashed -+- */
     public function trashed(Request $request)
     {
-        $item = $this->opts_get('deletable.model');
-        
-        /** @var Model $items */
-        $items = $item::select('id', 'name', 'deleted_at')->onlyTrashed()->filter($request->get('q'))->get()->toArray();
-        
+        $columns = [
+            'id',
+            module('name-attr'),
+            'deleted_at'
+        ];
+
+        /** @var Model $rows */
+        $rows = module('class')::select($columns)->onlyTrashed()->filter($request->query('filters'))->get()->toArray();
+
+        $headers = $this->generateHeaders($columns);
+
         return app('view')->make('std-admin::trashed')
-            ->with('rows', $items);
+            ->with('headers', $headers)
+            ->with('rows', $rows);
     }
 }

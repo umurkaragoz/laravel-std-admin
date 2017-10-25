@@ -33,12 +33,12 @@ class StdAdminServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // bind Module as singleton
         $this->app->singleton(StdAdminModule::class, function () {
-            $module = new StdAdminModule();
+            $module = new StdAdminModule($this->app);
 
             return $module;
-        }
-        );
+        });
     }
 
     private function setupModuleMorphMap()
@@ -47,7 +47,7 @@ class StdAdminServiceProvider extends ServiceProvider
         // by default, Eloquent uses fully qualified class name in polymorphic relationship adaptor fields (e.g. 'relation_type')
         // this will instruct Elquent to use model slug instead
         // see: https://laravel.com/docs/5.5/eloquent-relationships#polymorphic-relations section: "Custom Polymorphic Types"
-        Relation::morphMap(module()->get('class', 'slug'));
+        Relation::morphMap(module()->all('class', 'slug'));
     }
 }
  

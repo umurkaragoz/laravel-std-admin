@@ -6,7 +6,24 @@
  *
  * @return \Umurkaragoz\StdAdmin\ModuleFacade
  */
-function module()
+function module($key = false, $default = false)
 {
-    return app(\Umurkaragoz\StdAdmin\StdAdminModule::class);
+    $instance = app(\Umurkaragoz\StdAdmin\StdAdminModule::class);
+
+    if($key){
+        return $instance->config($key, $default);
+    } else {
+        return $instance;
+    }
+}
+
+/* ------------------------------------------------------------------------------------------------------------------------------- module Route -+- */
+/**
+ * Get the Module instance
+ *
+ * @return string|bool
+ */
+function mRoute($action, $parameters = [])
+{
+    return module()->route($action, $parameters);
 }
