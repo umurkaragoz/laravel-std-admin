@@ -14,6 +14,7 @@ class StdAdminModule
     private $configAll = [];
     // module config
     private $config = [];
+    private $configDefaults = [];
     // trans
     private $trans = [];
 
@@ -24,11 +25,8 @@ class StdAdminModule
 
     public $editing;
     public $creating;
-
     public $formMethod;
     public $formAction;
-    // id of current item (taken from the url)
-    public $id;
 
 
     public function __construct($app = false)
@@ -38,33 +36,6 @@ class StdAdminModule
         }
         $this->app = $app;
     }
-
-
-    /* ------------------------------------------------------------------------------------------------------------------------ PRIVATE METHODS -+- */
-
-    /* ---------------------------------------------------------------------------------------------------------------------------- load Config -+- */
-    /**
-     * Load and parse module configs
-     */
-    private function loadConfig()
-    {
-        $this->configAll = config('std-admin.modules');
-
-        foreach ($this->configAll as $key => &$options) {
-            if (!$options['enabled']) {
-                unset($this->configAll[$key]);
-                continue;
-            }
-
-            $reflection = new ReflectionClass($options['class']);
-
-            // add more information about each config
-            $options['class-short'] = $reflection->getShortName();
-            $options['slug'] = strtolower($options['class-short']);
-            $options['name'] = $key;
-        }
-    }
-
     /* ------------------------------------------------------------------------------------------------------------------------- PUBLIC METHODS -+- */
 
     /* -------------------------------------------------------------------------------------------------------------------- parse Current Route -+- */
@@ -104,15 +75,11 @@ class StdAdminModule
 
         $this->supersection = $supersection;
         $this->name = $module;
+
         $this->editing = $editing;
         $this->creating = $creating;
         $this->formMethod = $formMethod;
         $this->formAction = $formAction;
-        $this->id = $id;
-
-        $this->slug = $this->config('slug');
-
-        $this->config = array_get($this->configAll, $this->name);
 
         // legacy support
         // TODO: think about a cleaner way to use utilities in views
@@ -122,6 +89,9 @@ class StdAdminModule
             'editing'  => $editing,
             'creating' => $creating,
         ]);
+
+        // set config config
+        $this->config = array_get($this->configAll, $this->name);
     }
 
     /* --------------------------------------------------------------------------------------------------------------------------------- config -+- */
@@ -149,27 +119,9 @@ class StdAdminModule
      */
     public function trans($key, $default = false)
     {
-        // process trans. Add and overwrite in order;
-        // 1) std-admin/modules.{module}
-        // 2) validation.attributes
-        // 3) std-admin/modules._common.attributes
+        if (!$this->trans) $this->loadTrans();
 
-        if (!$this->trans) {
-            /* -------------------------------------------------------------------------------------------------------------------------------- -1- */
-            if (is_array(trans('std-admin/modules.' . module('name'))))
-                $this->trans = trans('std-admin/modules.' . module('name'));
-
-            /* -------------------------------------------------------------------------------------------------------------------------------- -2- */
-            if (is_array(trans('validation.attributes')))
-                $this->trans['attributes'] = array_merge(array_get($this->trans, 'attributes', []), trans('validation.attributes'));
-
-            /* -------------------------------------------------------------------------------------------------------------------------------- -3- */
-            if (is_array(trans('std-admin/modules._common.attributes')))
-                $this->trans['attributes'] = array_merge($this->trans['attributes'], trans('std-admin/modules._common.attributes'));
-
-        }
-
-        return array_get($this->trans, $key, $default);
+        return $this->resolveConfigLinks(array_get($this->trans, $key, $default), 'trans');
     }
 
     /* ---------------------------------------------------------------------------------------------------------------------------------- route -+- */
@@ -240,6 +192,125 @@ class StdAdminModule
         }
 
         return $configAll;
+    }
+
+    /* -------------------------------------------------------------------------------------------------------------------------- extend Config -+- */
+    /**
+     * Extend the module config with given values
+     */
+    public function extendConfig($config)
+    {
+        $this->config = $this->config ?: [];
+
+        $this->config = array_replace_recursive($this->config, $config);
+
+        // update base general config
+        array_set($this->configAll, $this->config('name'), $this->config);
+    }
+
+    /* ------------------------------------------------------------------------------------------------------------------------ PRIVATE METHODS -+- */
+
+    /* ---------------------------------------------------------------------------------------------------------------------------- load Config -+- */
+    /**
+     * Load and parse module configs
+     */
+    private function loadConfig()
+    {
+        $this->configAll = config('std-admin.modules');
+        $this->configDefaults = array_pull($this->configAll, '_defaults');
+
+        foreach ($this->configAll as $key => &$options) {
+            $reflection = new ReflectionClass($options['class']);
+
+            // add more information about each config
+            $options['class-short'] = $reflection->getShortName();
+            $options['slug'] = strtolower($options['class-short']);
+            $options['name'] = $key;
+        }
+
+        $this->fillConfigDefaults();
+        $this->removeDisabledModuleConfig();
+    }
+
+    /* ------------------------------------------------------------------------------------------------------------------- fill Config Defaults -+- */
+    /**
+     * This fills unspecified config values with defaults by extending the defauls using each module specification
+     */
+    private function fillConfigDefaults()
+    {
+        foreach ($this->configAll as $key => &$options) {
+            // extend defaults with this module, save the result to this module's config.
+            $options = array_replace_recursive($this->configDefaults, $options);
+        }
+    }
+
+    /* ----------------------------------------------------------------------------------------------------------------------------- load Trans -+- */
+    /**
+     * Load and parse module trans
+     */
+    private function loadTrans()
+    {
+        // process trans. Add and overwrite in order;
+
+        // 1) std-admin/modules.{module}
+        if (is_array(trans('std-admin/modules.' . module('name'))))
+            $this->trans = trans('std-admin/modules.' . module('name'));
+
+        // 2) validation.attributes
+        if (is_array(trans('validation.attributes')))
+            $this->trans['attributes'] = array_merge(array_get($this->trans, 'attributes', []), trans('validation.attributes'));
+
+        // 3) std-admin/modules._default.attributes
+        if (is_array(trans('std-admin/modules._default.attributes')))
+            $this->trans['attributes'] = array_merge($this->trans['attributes'], trans('std-admin/modules._default.attributes'));
+
+
+        $this->fillTransDefaults();
+    }
+
+    /* ------------------------------------------------------------------------------------------------------------------- fill Trans Defaults -+- */
+    /**
+     * This fills unspecified trans values with defaults by extending the defauls using each module specification
+     */
+    private function fillTransDefaults()
+    {
+        // extend defaults with this module, save the result to this module's trans.
+        $this->trans = array_replace_recursive($this->trans, trans("std-admin/modules._defaults"));
+    }
+
+    /* ------------------------------------------------------------------------------------------------------------------- resolve Config Links -+- */
+    private function resolveConfigLinks($value, $type = 'config')
+    {
+        // replace variables/inner links.
+        $newValue = preg_replace_callback('|:([A-z:._-]*)|', function ($matches) use ($type) {
+            $raw = $matches[0];
+            $key = $matches[1];
+
+            $source = $type == 'config' ? $this->config : $this->trans;
+
+            // retrieve the value from opts.
+            $value = array_get($source, $key, $raw);
+
+            return $value;
+        }, $value);
+
+        // re-process the value if it has changed, return it if it has not.
+        return $value == $newValue ? $value : $this->resolveConfigLinks($newValue);
+    }
+
+    /* ---------------------------------------------------------------------------------------------------------- remove Disabled Module Config -+- */
+    /**
+     * This removes disabled modules from 'configAll'
+     */
+    private function removeDisabledModuleConfig()
+    {
+        foreach ($this->configAll as $key => &$options) {
+
+            if (!array_get($options, 'enabled')) {
+                unset($this->configAll[$key]);
+                continue;
+            }
+        }
     }
 
 }

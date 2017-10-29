@@ -28,24 +28,24 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 
         /* ------------------------------------------------------------------------------------------------------------------ craft method list <-- */
         $only = [];
 
-        $functions = module()->all('functions', null, $module);
+        $routes = module()->all('routes', null, $module);
 
-        if(array_get($functions, 'index'))
+        if(array_get($routes, 'index'))
             $only[] = 'index';
 
-        if(array_get($functions, 'create'))
+        if(array_get($routes, 'create'))
             $only = array_merge($only, ['create', 'store']);
 
-        if(array_get($functions, 'update'))
+        if(array_get($routes, 'update'))
             $only = array_merge($only, ['edit', 'update']);
 
-        if(array_get($functions, 'delete'))
+        if(array_get($routes, 'delete'))
             $only[] = 'destroy';
 
         /* -------------------------------------------------------------------------------------------------------------------- generate routes <-- */
         Route::resource($module, "{$config['class-short']}Controller", ['only' => $only]);
 
-        if(module()->all('functions.restore',null,$module)){
+        if(module()->all('routes.restore',null,$module)){
             Route::get("$module/trashed",    ["as" => "$module.trashed",    "uses" => "{$config['class-short']}Controller@trashed"]);
             Route::get("$module/{id}",       ["as" => "$module.restore",    "uses" => "{$config['class-short']}Controller@restore"]);
         }

@@ -13,54 +13,18 @@ use Illuminate\Http\Request;
  */
 trait ManagesDeletables
 {
-
-    /* ----------------------------------------------------------------------------------------------------------------------------------- boot -+- */
-    final protected function bootManagesDeletablesTrait()
-    {
-        $this->setManagesDeletablesDefaultOptions();
-    }
-
-    /* -------------------------------------------------------------------------------------------------------------------- set default options -+- */
-    private function setManagesDeletablesDefaultOptions()
-    {
-        $this->opts_set([
-            'deletable' => [
-                'model'             => ':model',
-                'model-name'        => ':model-name',
-                'model-name-plural' => ':model-name-plural',
-                // > info messages to return
-                'messages'          => [
-                    'success' => 'Operation successfully completed.',
-                    'error'   => 'An error occurred during the operation.',
-                    // - info messages to return related to 'destroy' process.
-                    'destroy' => [
-                        'success' => ':deletable.messages.success',
-                        'error'   => ':deletable.messages.error',
-                    ],
-                    // - info messages to return related to 'restore' process.
-                    'restore' => [
-                        'success' => ':deletable.messages.success',
-                        'error'   => ':deletable.messages.error',
-                    ],
-                ]
-                // ^ info messages to return
-            ]
-        ]);
-    }
-
     /* -------------------------------------------------------------------------------------------------------------------------------- destroy -+- */
     public function destroy($id)
     {
         /** @var Model $row */
         $row = module('class')::findOrFail($id);
-        $this->item = $row;
 
         if ($row->delete()) {
             $success = true;
-            $message = $this->opts_get('deletable.messages.destroy.success');
+            $message = module()->trans('messages.delete.success');
         } else {
             $success = false;
-            $message = $this->opts_get('deletable.messages.destroy.error');
+            $message = module()->trans('messages.delete.error');
         }
 
         return $this->jsonResponse($success, $message);
@@ -72,14 +36,12 @@ trait ManagesDeletables
         /** @var Model $row */
         $row = module('class')::onlyTrashed()->findOrFail($id);
 
-        $this->item = $row;
-
         if ($row->restore()) {
             $success = true;
-            $message = $this->opts_get('deletable.messages.restore.success');
+            $message = module()->trans('messages.restore.success');
         } else {
             $success = false;
-            $message = $this->opts_get('deletable.messages.restore.error');
+            $message = module()->trans('messages.restore.error');
         }
 
         return $this->jsonResponse($success, $message);

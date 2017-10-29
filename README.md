@@ -33,11 +33,13 @@ Admin panel backbone for standard laravel projects.
         - restore
 
 
+
 - standard index pages
     - sorting
     - one-column text filtering
     - boolean toggles
     - deletables
+
 
 
 - deletables
@@ -50,6 +52,7 @@ Admin panel backbone for standard laravel projects.
 
 - generic
     - ability to use either config files or controller constructs for module settings
+
 
 
 - index generator
@@ -82,6 +85,7 @@ Admin panel backbone for standard laravel projects.
     - ordering: models *may* have;
         - `order` field
         - `order()` scope
+
 
 
 - deleting

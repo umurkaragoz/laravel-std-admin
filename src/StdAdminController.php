@@ -41,105 +41,11 @@ class StdAdminController extends Controller
      *
      * @param int $level module level
      */
-    public function __construct($level = 0)
+    public function __construct($config = [])
     {
-        module()->parseCurrentRoute($level);
+        module()->parseCurrentRoute(array_get($config, 'level', 0));
 
-        // set default options
-        $this->setDefaultOptions();
-
-        // boot native traits
-        $this->bootNativeTraits();
-    }
-
-    private function bootNativeTraits()
-    {
-        $this->bootManagesDeletablesTrait();
-    }
-
-    private function setDefaultOptions()
-    {
-        $this->opts_set([
-            // SomeModel::class
-            'model'             => ":model-map.$this->section",
-            // 'Model'
-            'model-name'        => 'Model',
-            // 'Models'
-            'model-name-plural' => 'Models',
-            'item-name-attr'    => 'name',
-            // map sections to models so you do not have to supply ':model'. 'users' => User::class.
-            'model-map'         => []
-        ]);
-    }
-
-    /* -------------------------------------------------------------------------------------------------------------------------------- OPTIONS -+- */
-
-    /* ------------------------------------------------------------------------------------------------------------------------------- opts set -+- */
-    /**
-     * Replaces given key on the options. Extends options array when only one array parameter is supplied.
-     *
-     * @param mixed|array $key   Key in options array to update its value.
-     * @param mixed       $value Array of options to extend the defaults with.
-     *
-     */
-    protected function opts_set($key, $value = false)
-    {
-        if ($value) {
-            // replace the array key if both key and value is given.
-            array_set($this->opts, $key, $value);
-        } else {
-            // extend the whole array if only one parameter given.
-            $this->opts = array_replace_recursive($this->opts, $key);
-        }
-    }
-
-    /* ----------------------------------------------------------------------------------------------------------------------------------- opts -+- */
-    /**
-     * Get a value from section options. Dot notation can be used for nested keys.
-     *
-     * @param string $key     Key to retrieve, dot notation can be used.
-     * @param bool   $default Default key to return in case of no match.
-     *
-     * @return mixed|null
-     */
-    protected function opts_get($key, $default = false)
-    {
-        $value = array_get($this->opts, $key, $default);
-
-        $value = $this->optsResolveLinks($value, $default);
-
-        // return the result.
-        return $value;
-    }
-
-    private function optsResolveLinks($value)
-    {
-        $item = $this->item;
-
-        // replace variables/inner links.
-        $newValue = preg_replace_callback('|:([A-z:._-]*)|', function ($matches) use ($item) {
-            $raw = $matches[0];
-            $key = $matches[1];
-
-            // retrieve the value from item attributes.
-            if (starts_with($key, 'item.')) {
-                // to get a high IMDB score, we shall allow links in links. Linkception. Resolve links in the link.
-                $key = (strpos($key, ':') !== false) ? $this->optsResolveLinks($key) : $key;
-
-                return object_get($item, substr($key, 5), $raw);
-            }
-
-            // retrieve the value from opts.
-            $value = array_get($this->opts, $key, $raw);
-
-            // update retrieved option.
-            $this->opts_set($key, $value);
-
-            return $value;
-        }, $value);
-
-        // re-process the value if it has changed, return it if it has not.
-        return $value == $newValue ? $value : $this->optsResolveLinks($newValue);
+        module()->extendConfig($config);
     }
 
     /* ------------------------------------------------------------------------------------------------------------------------------ UTILITIES -+- */
