@@ -85,7 +85,7 @@ class StdAdminController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    private function jsonResponse($status = true, $message = '', $data = null, $code = null)
+    protected function jsonResponse($status = true, $message = '', $data = null, $code = null)
     {
         $status = $status === true ? 'success' : ($status === false ? 'error' : $status);
 

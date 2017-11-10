@@ -220,6 +220,10 @@ class StdAdminModule
         $this->configDefaults = array_pull($this->configAll, '_defaults');
 
         foreach ($this->configAll as $key => &$options) {
+            if (!array_get($options, 'class')) {
+                throw new \InvalidArgumentException("Required config parameter 'class' is not specified for module '$key'");
+            }
+
             $reflection = new ReflectionClass($options['class']);
 
             // add more information about each config
@@ -282,7 +286,7 @@ class StdAdminModule
     private function resolveConfigLinks($value, $type = 'config')
     {
         // replace variables/inner links.
-        $newValue = preg_replace_callback('|:([A-z:._-]*)|', function ($matches) use ($type) {
+        $newValue = preg_replace_callback('|:([A-z:._-]*)|', function($matches) use ($type) {
             $raw = $matches[0];
             $key = $matches[1];
 

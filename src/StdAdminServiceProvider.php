@@ -20,7 +20,10 @@ class StdAdminServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/views', 'std-admin');
 
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        if (!$this->app->routesAreCached()) {
+            // we do not use 'loadRoutesFrom' for laravel <5.3 backwards compatibility
+            require __DIR__ . '/routes.php';
+        }
 
         $this->setupModuleMorphMap();
 
@@ -34,7 +37,7 @@ class StdAdminServiceProvider extends ServiceProvider
     public function register()
     {
         // bind Module as singleton
-        $this->app->singleton(StdAdminModule::class, function () {
+        $this->app->singleton(StdAdminModule::class, function() {
             $module = new StdAdminModule($this->app);
 
             return $module;
