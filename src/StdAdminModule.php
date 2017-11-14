@@ -202,6 +202,17 @@ class StdAdminModule
     {
         $this->config = $this->config ?: [];
 
+        // we want these keys to directly overwritten. For example, when we set index columns, we do not want those to be merged with default values.
+        $keysToDirectlyOverwrite = [
+            'functions.index.columns',
+            'functions.restore.columns',
+        ];
+
+        foreach ($keysToDirectlyOverwrite as $key) {
+            if (array_has($config, $key))
+                array_set($this->config, $key, array_get($config, $key));
+        }
+
         $this->config = array_replace_recursive($this->config, $config);
 
         // update base general config
