@@ -6,19 +6,24 @@ Route::pattern('model','[a-z0-9\-]+');
 
 /* ------------------------------------------------------------------------------------------------------------------------------ Admin / Login -+- */
 
-Route::group( ['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 'as' => 'admin.', 'middleware' => 'web'],function(){
-    Route::get('/',         ['as' => 'login',     'uses' => 'AdminController@login']);
-    Route::get('login',     ['as' => 'login',     'uses' => 'AdminController@login']);
-    Route::post('login',    ['as' => 'login',     'uses' => 'AdminController@postLogin']);
-});
+if(config('std-admin.plugin.utility_routes', true)){
+    Route::group( ['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 'as' => 'admin.', 'middleware' => 'web'],function(){
+        Route::get('login',     ['as' => 'login',     'uses' => 'AdminController@login']);
+        Route::post('login',    ['as' => 'login',     'uses' => 'AdminController@postLogin']);
+    });
+}
 
 Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 'as' => 'admin.', 'middleware' => ['web', 'auth']], function () {
 
-    Route::get('logout',   ['as' => 'logout',    'uses' => 'AdminController@logout']);
+    if(config('std-admin.plugin.utility_routes', true)){
+        Route::get('logout',   ['as' => 'logout',    'uses' => 'AdminController@logout']);
+    }
 
     /* ---------------------------------------------------------------------------------------------------------------------- Admin / Utilities -+- */
-    Route::post('sorting/{model}',   ['as' => 'sorting',   'uses' => 'AjaxController@sorting']);
-    Route::post('editable/{model}',  ['as' => 'editable',  'uses' => 'AjaxController@editable']);
+    if(config('std-admin.plugin.utility_routes', true)){
+        Route::post('sorting/{model}',   ['as' => 'sorting',   'uses' => 'AjaxController@sorting']);
+        Route::post('editable/{model}',  ['as' => 'editable',  'uses' => 'AjaxController@editable']);
+    }
 
 
     /* ------------------------------------------------------------------------------------------------------------------------ Admin / Modules -+- */
