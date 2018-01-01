@@ -8,7 +8,7 @@
                 <th>{{ $header }}</th>
             @endforeach
             @if(module('functions.delete'))
-                <th>İşlemler</th>
+                <th></th>
             @endif
         </tr>
         </thead>
@@ -48,12 +48,10 @@
                     @endif
                 @endforeach
                 @if(module('functions.delete'))
-                    <td style="width: 80px;">
-                        <div style="width:60px; float:left">
-                            <button class="btn btn-danger deletable" data-url="{{ module()->route('destroy', $row->id) }}">
-                                <i class="fa fa-trash-o"></i>&nbsp; Sil
-                            </button>
-                        </div>
+                    <td style="width: 33px;">
+                        <button class="btn btn-danger deletable" data-url="{{ module()->route('destroy', $row->id) }}">
+                            <i class="fa fa-times"></i>
+                        </button>
                     </td>
                 @endif
             </tr>

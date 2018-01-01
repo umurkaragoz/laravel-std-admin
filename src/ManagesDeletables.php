@@ -19,12 +19,14 @@ trait ManagesDeletables
         /** @var Model $row */
         $row = module('class')::findOrFail($id);
 
+        $action = module('functions.restore') ? 'trash' : 'delete';
+
         if ($row->delete()) {
             $success = true;
-            $message = module()->trans('messages.delete.success');
+            $message = module()->trans("messages.$action.success");
         } else {
             $success = false;
-            $message = module()->trans('messages.delete.error');
+            $message = module()->trans("messages.$action.error");
         }
 
         return $this->jsonResponse($success, $message);

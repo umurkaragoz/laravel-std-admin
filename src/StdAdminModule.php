@@ -21,6 +21,7 @@ class StdAdminModule
     public $action;
 
     public $supersection;
+    public $supersectionParameters;
     public $name;
 
     public $editing;
@@ -52,26 +53,29 @@ class StdAdminModule
         $editing = request()->segment($level + 4) == 'edit';
         $creating = request()->segment($level + 3) == 'create';
 
+        // get route parameters
+        $this->supersectionParameters = request()->route() ? request()->route()->parameters() : [];
+
+        // parameters are for supersection parameters. So remove any section parameter which might exist.
+        if (is_numeric(request()->segment($level + 3))) {
+            array_pop($this->supersectionParameters);
+        }
+
         // generate supersection path for the route
         $supersection = '';
         for ($i = 0; $i < $level + 1; $i++) {
             $supersection .= request()->segment($i + 1) . '.';
         }
 
+        // remove parameters from the supersection for it is the route name
+        foreach ($this->supersectionParameters as $parameter) {
+            $supersection = str_replace("$parameter.", '', $supersection);
+        }
+
         $module = request()->segment($level + 2);
 
         $formMethod = $editing ? 'put' : 'post';
         $formAction = $editing ? 'update' : 'store';
-
-        // on get the id of the current model
-        $id = $editing ? request()->segment($level + 3) : false;
-
-        // generate links to be used in create and edit forms
-        if ($editing) {
-            $formAction = route("$supersection$module.$formAction", $id);
-        } else if ($creating) {
-            $formAction = route("$supersection$module.$formAction");
-        }
 
         $this->supersection = $supersection;
         $this->name = $module;
@@ -80,6 +84,16 @@ class StdAdminModule
         $this->creating = $creating;
         $this->formMethod = $formMethod;
         $this->formAction = $formAction;
+
+        // on get the id of the current model
+        $id = $editing ? request()->segment($level + 3) : false;
+
+        // generate links to be used in create and edit forms
+        if ($editing) {
+            $formAction = $this->route($formAction, $id);
+        } else if ($creating) {
+            $formAction = $this->route($formAction);
+        }
 
         // legacy support
         // TODO: think about a cleaner way to use utilities in views
@@ -138,8 +152,8 @@ class StdAdminModule
         // build full route name
         $routeName = $this->supersection . $this->name . '.' . $action;
 
-        // also convenienly handle special cases like editable and sorting.
-        // make calls to generate those routes module agnostic.
+        // also conveniently handle special cases like editable and sorting.
+        // make module agnostic calls to generate those routes.
         if (!$parameters) {
             if ($action == 'editable') {
                 $routeName = 'admin.editable';
@@ -150,6 +164,11 @@ class StdAdminModule
                 $parameters[] = module('slug');
             }
         }
+
+        // if a single parameter is given, put it into an array.
+        if ($parameters && !is_array($parameters)) $parameters = [$parameters];
+
+        $parameters = array_merge($this->supersectionParameters, $parameters);
 
         // check if route name exists and generate the route
         if (Route::has($routeName)) {

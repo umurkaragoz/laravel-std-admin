@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait GeneratesIndexes
 {
     /* ---------------------------------------------------------------------------------------------------------------------------------- index -+- */
-    public function index()
+    public function defaultIndex()
     {
         $columns = module('functions.index.columns');
 
