@@ -15,7 +15,7 @@ class StdAdminServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/views' => base_path('resources/views/vendor/umurkaragoz/std-admin'),
+            __DIR__ . '/views' => base_path('resources/views/vendor/std-admin'),
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/views', 'std-admin');
@@ -48,7 +48,7 @@ class StdAdminServiceProvider extends ServiceProvider
     {
         // configure polymorphic "relation type" naming
         // by default, Eloquent uses fully qualified class name in polymorphic relationship adaptor fields (e.g. 'relation_type')
-        // this will instruct Elquent to use model slug instead
+        // this will instruct Eloquent to use model slug instead
         // see: https://laravel.com/docs/5.5/eloquent-relationships#polymorphic-relations section: "Custom Polymorphic Types"
         Relation::morphMap(module()->all('class', 'slug'));
     }
