@@ -17,7 +17,7 @@ trait ManagesDeletables
     public function destroy($id)
     {
         /** @var Model $row */
-        $row = module('class')::findOrFail($id);
+        $row = $this->getDeletableModelBuilder()->findOrFail($id);
 
         $action = module('functions.restore') ? 'trash' : 'delete';
 
@@ -32,11 +32,26 @@ trait ManagesDeletables
         return $this->jsonResponse($success, $message);
     }
 
+    /* ------------------------------------------------------------------------------------------------------------ get Deletable Model Builder -+- */
+    /**
+     * Get deletable model instance to be deleted or restored.
+     * This is exists to allow the user to modify the builder without being have to override destroy or restore method.
+     *
+     * @return Model
+     */
+    protected function getDeletableModelBuilder()
+    {
+        /** @var Model $row */
+        $row = module('class')::getQuery();
+
+        return $row;
+    }
+
     /* -------------------------------------------------------------------------------------------------------------------------------- restore -+- */
     public function restore($id)
     {
         /** @var Model $row */
-        $row = module('class')::onlyTrashed()->findOrFail($id);
+        $row = $this->getDeletableModelBuilder()->onlyTrashed()->findOrFail($id);
 
         if ($row->restore()) {
             $success = true;
@@ -52,11 +67,7 @@ trait ManagesDeletables
     /* -------------------------------------------------------------------------------------------------------------------------------- trashed -+- */
     public function trashed(Request $request)
     {
-        $columns = [
-            'id',
-            module('name-attr'),
-            'deleted_at'
-        ];
+        $columns = module('functions.restore.columns');
 
         /** @var Model $rows */
         $rows = module('class')::select($columns)->onlyTrashed()->filter($request->query('filters'))->get()->toArray();
