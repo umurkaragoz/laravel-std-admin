@@ -42,7 +42,7 @@ trait ManagesDeletables
     protected function getDeletableModelBuilder()
     {
         /** @var Model $row */
-        $row = module('class')::getQuery();
+        $row = module('class')::query();
 
         return $row;
     }
@@ -69,8 +69,10 @@ trait ManagesDeletables
     {
         $columns = module('functions.restore.columns');
 
+        $columnNames = $this->array_keys($columns);
+
         /** @var Model $rows */
-        $rows = module('class')::select($columns)->onlyTrashed()->filter($request->query('filters'))->get()->toArray();
+        $rows = module('class')::select(array_keys($columns))->onlyTrashed()->filter($request->query('filters'))->get()->toArray();
 
         $headers = $this->generateHeaders($columns);
 
