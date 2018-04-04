@@ -16,6 +16,7 @@ class StdAdminServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/views' => base_path('resources/views/vendor/std-admin'),
+            __DIR__ . '/lang'  => base_path('resources/lang/vendor/std-admin'),
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/views', 'std-admin');
@@ -24,6 +25,8 @@ class StdAdminServiceProvider extends ServiceProvider
             // we do not use 'loadRoutesFrom' for laravel <5.3 backwards compatibility
             require __DIR__ . '/routes.php';
         }
+
+        $this->loadTranslationsFrom(__DIR__ . '/lang', 'std-admin');
 
         $this->setupModuleMorphMap();
 

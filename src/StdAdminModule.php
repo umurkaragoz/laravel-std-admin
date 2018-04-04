@@ -287,16 +287,16 @@ class StdAdminModule
         // process trans. Add and overwrite in order;
 
         // 1) std-admin/modules.{module}
-        if (is_array(trans('std-admin/modules.' . module('name'))))
-            $this->trans = trans('std-admin/modules.' . module('name'));
+        if (is_array(trans('std-admin::modules.' . module('name'))))
+            $this->trans = trans('std-admin::modules.' . module('name'));
 
         // 2) validation.attributes
         if (is_array(trans('validation.attributes')))
             $this->trans['attributes'] = array_merge(array_get($this->trans, 'attributes', []), trans('validation.attributes'));
 
         // 3) std-admin/modules._default.attributes
-        if (is_array(trans('std-admin/modules._default.attributes')))
-            $this->trans['attributes'] = array_merge($this->trans['attributes'], trans('std-admin/modules._default.attributes'));
+        if (is_array(trans('std-admin::modules._default.attributes')))
+            $this->trans['attributes'] = array_merge($this->trans['attributes'], trans('std-admin::modules._default.attributes'));
 
 
         $this->fillTransDefaults();
@@ -309,21 +309,21 @@ class StdAdminModule
     private function fillTransDefaults()
     {
         // extend defaults with this module, save the result to this module's trans.
-        $this->trans = array_replace_recursive($this->trans, trans("std-admin/modules._defaults"));
+        $this->trans = array_replace_recursive($this->trans, trans("std-admin::modules._defaults"));
     }
 
     /* ------------------------------------------------------------------------------------------------------------------- resolve Config Links -+- */
     private function resolveConfigLinks($value, $type = 'config')
     {
         // replace variables/inner links.
-        $newValue = preg_replace_callback('|:([A-z:._-]*)|', function($matches) use ($type) {
-            $raw = $matches[0];
-            $key = $matches[1];
+            $newValue = preg_replace_callback('|:([A-z:._-]*)|', function($matches) use ($type) {
+                $raw = $matches[0];
+                $key = $matches[1];
 
-            $source = $type == 'config' ? $this->config : $this->trans;
+                $source = $type == 'config' ? $this->config : $this->trans;
 
-            // retrieve the value from opts.
-            $value = array_get($source, $key, $raw);
+                // retrieve the value from opts.
+                $value = array_get($source, $key, $raw);
 
             return $value;
         }, $value);

@@ -4,7 +4,7 @@
 /**
  * Get the Module instance
  *
- * @return \Umurkaragoz\StdAdmin\ModuleFacade|array
+ * @return \Umurkaragoz\StdAdmin\ModuleFacade
  */
 function module($key = false, $default = false)
 {

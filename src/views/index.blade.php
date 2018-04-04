@@ -35,8 +35,8 @@
                             <input type="checkbox" class="update-on-change"
                                    {{ $row->$column ? 'checked' : '' }}
                                    data-toggle="toggle"
-                                   data-on="{{ array_get($opts, 1, trans('std-admin/ui.toggle.on-default')) }}"
-                                   data-off="{{ array_get($opts, 2, trans('std-admin/ui.toggle.off-default')) }}"
+                                   data-on="{{ array_get($opts, 1, trans('std-admin::ui.toggle.on-default')) }}"
+                                   data-off="{{ array_get($opts, 2, trans('std-admin::ui.toggle.off-default')) }}"
                                    data-onstyle="{{ array_get($opts, 3, 'success') }}"
                                    data-offstyle="{{ array_get($opts, 4, 'default') }}"
                                    data-size="small"
