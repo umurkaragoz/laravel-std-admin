@@ -12,9 +12,9 @@
             @endif
         </tr>
         </thead>
-        <tbody class="sortable" data-sortable-url="{{ module()->route('sorting') }}">
+        <tbody class="sortable" data-sortable-url="{{ mRoute('sorting') }}">
         @foreach($rows as $row)
-            <tr data-id="{{ $row->id }}" data-click-url="{{ module()->route('edit', $row->id) }}">
+            <tr data-id="{{ $row->id }}" data-click-url="{{ mRoute('edit', $row->id) }}">
                 @foreach($columns as $column => $type)
                     @if($type == 'sorting')
                         <td class="handle">
@@ -40,7 +40,7 @@
                                    data-onstyle="{{ array_get($opts, 3, 'success') }}"
                                    data-offstyle="{{ array_get($opts, 4, 'default') }}"
                                    data-size="small"
-                                   data-url="{{ module()->route('editable') }}"
+                                   data-url="{{ mRoute('editable') }}"
                                    data-pk="{{ $row->id }}"
                                    data-name="{{ $column }}"
                             >
@@ -49,7 +49,7 @@
                 @endforeach
                 @if(module('functions.delete'))
                     <td style="width: 33px;">
-                        <button class="btn btn-danger deletable" data-url="{{ module()->route('destroy', $row->id) }}">
+                        <button class="btn btn-danger deletable" data-url="{{ mRoute('destroy', $row->id) }}">
                             <i class="fa fa-times"></i>
                         </button>
                     </td>

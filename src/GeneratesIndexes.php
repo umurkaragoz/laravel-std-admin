@@ -1,6 +1,7 @@
 <?php
 
 namespace Umurkaragoz\StdAdmin;
+
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -12,6 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 trait GeneratesIndexes
 {
     /* ---------------------------------------------------------------------------------------------------------------------------------- index -+- */
+    /**
+     * @return mixed
+     */
     public function defaultIndex()
     {
         $columns = module('functions.index.columns');

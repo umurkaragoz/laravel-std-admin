@@ -24,6 +24,7 @@ class StdAdminModule
     public $supersectionParameters;
     public $name;
 
+    public $method;
     public $editing;
     public $creating;
     public $formMethod;
@@ -84,6 +85,17 @@ class StdAdminModule
         $this->creating = $creating;
         $this->formMethod = $formMethod;
         $this->formAction = $formAction;
+
+
+        if ($this->editing) {
+            $this->method = 'edit';
+        } else if ($this->creating) {
+            $this->method = 'create';
+        } else if (!request()->segment($level + 3)) {
+            $this->method = 'index';
+        } else if (!request()->segment($level + 4) == 'trashed') {
+            $this->method = 'trashed';
+        }
 
         // on get the id of the current model
         $id = $editing ? request()->segment($level + 3) : false;
@@ -296,8 +308,7 @@ class StdAdminModule
 
         // 3) std-admin/modules._default.attributes
         if (is_array(trans('std-admin::modules._default.attributes')))
-            $this->trans['attributes'] = array_merge($this->trans['attributes'], trans('std-admin::modules._default.attributes'));
-
+            $this->trans['attributes'] = array_merge($this->trans['attributes'], trans('std-admin::modules._defaults.attributes'));
 
         $this->fillTransDefaults();
     }
@@ -316,14 +327,14 @@ class StdAdminModule
     private function resolveConfigLinks($value, $type = 'config')
     {
         // replace variables/inner links.
-            $newValue = preg_replace_callback('|:([A-z:._-]*)|', function($matches) use ($type) {
-                $raw = $matches[0];
-                $key = $matches[1];
+        $newValue = preg_replace_callback('|:([A-z:._-]*)|', function($matches) use ($type) {
+            $raw = $matches[0];
+            $key = $matches[1];
 
-                $source = $type == 'config' ? $this->config : $this->trans;
+            $source = $type == 'config' ? $this->config : $this->trans;
 
-                // retrieve the value from opts.
-                $value = array_get($source, $key, $raw);
+            // retrieve the value from opts.
+            $value = array_get($source, $key, $raw);
 
             return $value;
         }, $value);

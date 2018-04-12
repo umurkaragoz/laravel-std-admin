@@ -24,29 +24,48 @@ Admin panel backbone for standard laravel projects.
 ## Current
 
 
-- route generation
-    - function based route generation
-        - index
-        - create
-        - update
-        - delete
-        - restore
+### route generation
+
+- function based route generation
+    - index
+    - create
+    - update
+    - delete
+    - restore
 
 
 
-- standard index pages
-    - sorting
-    - one-column text filtering
-    - boolean toggles
-    - deletables
 
+### standard index pages
 
-
+- sorting
+- one-column text filtering
+- boolean toggles
 - deletables
-    - deleting from index pages
-    - standard trashed pages
-        - standard-column indexing
-        - restoring
+
+
+
+### deletables
+
+- deleting from index pages
+- standard trashed pages
+    - standard-column indexing
+    - restoring
+
+
+### editing data
+
+Supplying data to both `create` and `edit` operations under one method.
+
+Very often we need to supply some additonal data both for create and edit operations.
+
+A classical example would be need of supplying `categories` list to view while both creating or editing `products`.
+
+Override `supplyEditData()` method and place repeating data into it.
+It will supply returned data to views when `create` and `edit` methods are called.
+
+ 
+
 
 ## Planned
 

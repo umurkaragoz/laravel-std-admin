@@ -10,6 +10,7 @@ class StdAdminController extends Controller
 {
     use ManagesDeletables;
     use GeneratesIndexes;
+    use ManagesEditing;
 
     protected $opts = [];
 
@@ -46,6 +47,20 @@ class StdAdminController extends Controller
         module()->parseCurrentRoute(array_get($config, 'level', 0));
 
         module()->extendConfig($config);
+
+        // supply Edit Data
+        if (in_array(module()->method, ['create', 'edit'])) {
+            $this->supplyEditData();
+        }
+    }
+
+    public function __call($name, $arguments)
+    {
+        switch ($name) {
+            case 'index':
+                return $this->defaultIndex(...$arguments);
+            break;
+        }
     }
 
     /* ------------------------------------------------------------------------------------------------------------------------------ UTILITIES -+- */
