@@ -15,8 +15,10 @@ class StdAdminServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/views' => base_path('resources/views/vendor/std-admin'),
-            __DIR__ . '/lang'  => base_path('resources/lang/vendor/std-admin'),
+            __DIR__ . '/views'  => base_path('resources/views/vendor/std-admin'),
+            __DIR__ . '/lang'   => base_path('resources/lang/vendor/std-admin'),
+            __DIR__ . '/lang'   => base_path('resources/lang/vendor/std-admin'),
+            __DIR__ . '/config' => config_path('std-admin/'),
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/views', 'std-admin');

@@ -14,6 +14,7 @@ class StdAdminModule
     private $configAll = [];
     // module config
     private $config = [];
+    // default module config. Specified in std-admin.modules._defaults
     private $configDefaults = [];
     // trans
     private $trans = [];
@@ -284,9 +285,34 @@ class StdAdminModule
      */
     private function fillConfigDefaults()
     {
+        // we want these keys to directly overwritten. For example, when we set module middleware, we do not want those to be merged with default values.
+        $keysToPreserve = [
+            'routes.middleware',
+        ];
+
         foreach ($this->configAll as $key => &$options) {
+
+            # $key here is the module name. e.g. 'user'
+
+            $preservedItems = [];
+
+            // array_replace_recursive() ahead will 'merge' the module options with defaults.
+            // However we want some keys to be preserved, if they are spceficied.
+            // Therefore we cache preserved values here and later replace them back.
+            foreach ($keysToPreserve as $optionKey) {
+                if (array_has($options, $optionKey)) {
+                    $preservedItems[$optionKey] = array_get($options, $optionKey);
+                }
+            }
+
             // extend defaults with this module, save the result to this module's config.
             $options = array_replace_recursive($this->configDefaults, $options);
+
+            # now all the data is replaced and merged in a way we do not want for some keys.
+            // revert preserved data into initial status
+            foreach ($preservedItems as $itemKey => $preservedItem) {
+                array_set($options, $itemKey, $preservedItem);
+            }
         }
     }
 
