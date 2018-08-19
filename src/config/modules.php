@@ -10,6 +10,7 @@ return [
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - routes
         'routes'    => [
             'middleware' => ['web', 'auth'],
+            'show'       => true,
             'index'      => true,
             'create'     => true,
             'update'     => true,

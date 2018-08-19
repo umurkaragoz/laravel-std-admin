@@ -43,6 +43,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 
         if(array_get($routes, 'index'))
             $only[] = 'index';
 
+        if(array_get($routes, 'show'))
+            $only[] = 'show';
+
         if(array_get($routes, 'create'))
             $only = array_merge($only, ['create', 'store']);
 
