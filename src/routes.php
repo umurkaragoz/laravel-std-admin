@@ -1,7 +1,10 @@
 <?php
 // @formatter:off
 
-Route::pattern('id', '[0-9]+');
+foreach(module()->all('*') as $module => $config){
+    Route::pattern($config['slug'], '[0-9]+');
+}
+
 Route::pattern('model','[a-z0-9\-]+');
 
 /* ------------------------------------------------------------------------------------------------------------------------------ Admin / Login -+- */
